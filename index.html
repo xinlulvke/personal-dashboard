@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Personal Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .dashboard {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        #clock {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -1px;
+        }
+
+        #date {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            margin-top: 5px;
+            margin-bottom: 25px;
+        }
+
+        #greeting {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            font-weight: 400;
+        }
+
+        .search-box {
+            margin-bottom: 30px;
+        }
+
+        .search-box input {
+            width: 80%;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: background 0.3s;
+        }
+
+        .search-box input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-box input:focus {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .notepad-area {
+            text-align: left;
+            background: rgba(0, 0, 0, 0.15);
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .notepad-area h3 {
+            margin-top: 0;
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            background: transparent;
+            border: none;
+            color: white;
+            resize: none;
+            font-size: 0.95rem;
+            outline: none;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard">
+    <h2 id="greeting">Hello!</h2>
+    <div id="clock">00:00:00</div>
+    <div id="date">Loading date...</div>
+
+    <div class="search-box">
+        <form action="https://www.google.com/search" method="get">
+            <input type="text" name="q" placeholder="Search Google..." autocomplete="off">
+        </form>
+    </div>
+
+    <div class="notepad-area">
+        <h3>Quick Notes (Auto-saves)</h3>
+        <textarea id="notepad" placeholder="Type something to remember..."></textarea>
+    </div>
+</div>
+
+<script>
+    // 1. Live Clock & Dynamic Greeting
+    function updateDashboard() {
+        const now = new Date();
+        
+        // Time
+        let hours = now.getHours();
+        let minutes = now.getMinutes();
+        let seconds = now.getSeconds();
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+        document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+
+        // Date
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('date').textContent = now.toLocaleDateString('en-US', options);
+
+        // Greeting based on time
+        let greeting = "Good Hello";
+        if (hours < 12) greeting = "Good Morning ☀️";
+        else if (hours < 18) greeting = "Good Afternoon 🌤️";
+        else greeting = "Good Evening 🌙";
+        document.getElementById('greeting').textContent = greeting;
+    }
+
+    // Run clock instantly, then update every second
+    updateDashboard();
+    setInterval(updateDashboard, 1000);
+
+    // 2. Persistent Notepad (Using LocalStorage)
+    const notepad = document.getElementById('notepad');
+    
+    // Load existing notes if they exist
+    const savedNotes = localStorage.getItem('dashboardNotes');
+    if (savedNotes) {
+        notepad.value = savedNotes;
+    }
+
+    // Save notes whenever user types
+    notepad.addEventListener('input', () => {
+        localStorage.setItem('dashboardNotes', notepad.value);
+    });
+</script>
+
+</body>
+</html>
